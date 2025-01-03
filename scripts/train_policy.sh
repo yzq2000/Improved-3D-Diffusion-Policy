@@ -3,8 +3,8 @@
 #   bash scripts/train_policy.sh idp3 gr1_dex-3d 0913_example
 #   bash scripts/train_policy.sh dp_224x224_r3m gr1_dex-image 0913_example
 
-dataset_path=/home/ze/projects/Improved-3D-Diffusion-Policy/training_data_example
-
+# dataset_path=/home/a/Projects/Improved-3D-Diffusion-Policy/Improved-3D-Diffusion-Policy/data/tiangong_dexhand_1_traj.zarr
+dataset_path="tiangong_dexhand_1_traj.zarr"
 
 DEBUG=False
 wandb_mode=offline
@@ -14,6 +14,9 @@ alg_name=${1}
 task_name=${2}
 config_name=${alg_name}
 addition_info=${3}
+dataset_name=${4}
+dataset_path="/home/a/Projects/Improved-3D-Diffusion-Policy/Improved-3D-Diffusion-Policy/data/${dataset_name}"
+
 seed=0
 exp_name=${task_name}-${alg_name}-${addition_info}
 run_dir="data/outputs/${exp_name}_seed${seed}"

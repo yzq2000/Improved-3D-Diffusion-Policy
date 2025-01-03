@@ -1,0 +1,29 @@
+name: dexhand
+
+shape_meta: &shape_meta
+  # acceptable types: rgb, low_dim
+  obs:
+    image:
+      shape: [3, 84, 84]
+      type: rgb
+      horizon: 2
+    agent_pos:
+      shape: [26]
+      type: low_dim
+      horizon: 2
+  action:
+    shape: [26]
+    horizon: 16
+
+
+dataset:
+  _target_: diffusion_policy_3d.dataset.tiangong_dex_dataset_image.TiangongDexDatasetImage
+  zarr_path: data/tiangong_dexhand_1_traj.zarr
+  horizon: ${horizon}
+  pad_before: ${eval:'${n_obs_steps}-1'}
+  pad_after: ${eval:'${n_action_steps}-1'}
+  seed: 42
+  val_ratio: 0.00
+  max_train_episodes: 90
+  use_img: true
+  use_depth: false

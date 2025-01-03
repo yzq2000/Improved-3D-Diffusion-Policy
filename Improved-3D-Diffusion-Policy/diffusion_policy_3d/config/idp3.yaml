@@ -78,7 +78,7 @@ policy:
     use_layernorm: true
     final_norm: layernorm # layernorm, none
     normal_channel: false
-    num_points: 4096
+    num_points: 1024
 
 ema:
   _target_: diffusion_policy_3d.model.diffusion.ema_model.EMAModel
