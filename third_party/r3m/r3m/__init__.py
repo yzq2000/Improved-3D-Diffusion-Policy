@@ -65,6 +65,7 @@ def load_r3m(modelid, pretrained=True):
     configpath = os.path.join(home, foldername, "config.yaml")
     if not os.path.exists(modelpath):
         gdown.download(modelurl, modelpath, quiet=False)
+    if not os.path.exists(configpath):
         gdown.download(configurl, configpath, quiet=False)
         
     modelcfg = omegaconf.OmegaConf.load(configpath)
@@ -104,6 +105,7 @@ def load_r3m_reproduce(modelid):
     configpath = os.path.join(home, foldername, "config.yaml")
     if not os.path.exists(modelpath):
         gdown.download(modelurl, modelpath, quiet=False)
+    if not os.path.exists(configpath):
         gdown.download(configurl, configpath, quiet=False)
 
     modelcfg = omegaconf.OmegaConf.load(configpath)
