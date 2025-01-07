@@ -100,6 +100,11 @@ class TiangongDexEnvInference:
     def process_action(self, action):
         # TODO: de normalize action
         # left arm position(7), right arm position(7), left hand position(6), right hand position(6)
+        left_arm_jpos = action[:, :, 0:7]
+        right_arm_jpos = action[:, :, 7:14]
+        left_hand_jpos = action[:, :, 14:20]
+        right_hand_jpos = action[:, :, 20:26]
+        all_actions = np.concatenate((left_arm_jpos, left_hand_jpos, right_arm_jpos, right_hand_jpos), axis=-1)
         return action
     
     def process_cloud(self, obs):
