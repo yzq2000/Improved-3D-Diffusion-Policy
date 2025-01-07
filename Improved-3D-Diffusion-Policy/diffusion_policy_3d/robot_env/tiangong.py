@@ -99,6 +99,7 @@ class TiangongDexEnvInference:
     # de normalize action
     def process_action(self, action):
         # TODO: de normalize action
+        # left arm position(7), right arm position(7), left hand position(6), right hand position(6)
         return action
     
     def process_cloud(self, obs):
