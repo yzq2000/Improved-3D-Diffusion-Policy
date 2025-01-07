@@ -21,7 +21,7 @@ echo -e "\033[33mgpu id (to use): ${gpu_id}\033[0m"
 
 
 cd Improved-3D-Diffusion-Policy
-dataset_path="$(pwd)/data/${dataset_name}"
+dataset_path="$(pwd)/real_data/${dataset_name}"
 
 
 export HYDRA_FULL_ERROR=1 

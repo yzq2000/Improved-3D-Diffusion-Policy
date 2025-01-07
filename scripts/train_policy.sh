@@ -35,7 +35,7 @@ fi
 
 cd Improved-3D-Diffusion-Policy
 
-dataset_path="$(pwd)/data/${dataset_name}"
+dataset_path="$(pwd)/real_data/${dataset_name}"
 # echo $dataset_path
 
 export HYDRA_FULL_ERROR=1 
