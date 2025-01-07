@@ -1,10 +1,7 @@
 # Examples:
 
-#   bash scripts/train_policy.sh idp3 gr1_dex-3d 0913_example
-#   bash scripts/train_policy.sh dp_224x224_r3m gr1_dex-image 0913_example
-
-# dataset_path=/home/a/Projects/Improved-3D-Diffusion-Policy/Improved-3D-Diffusion-Policy/data/tiangong_dexhand_1_traj.zarr
-dataset_path="tiangong_dexhand_1_traj.zarr"
+#   bash scripts/train_policy.sh dp_224x224_r3m  tiangong_dexhand-image 0107-image tiangong_dexhand_grasp_82.zarr
+#   bash scripts/train_policy.sh idp3  tiangong_dexhand-3d 0107-3d tiangong_dexhand_grasp_82.zarr
 
 DEBUG=False
 wandb_mode=offline
@@ -15,7 +12,6 @@ task_name=${2}
 config_name=${alg_name}
 addition_info=${3}
 dataset_name=${4}
-dataset_path="/home/a/Projects/Improved-3D-Diffusion-Policy/Improved-3D-Diffusion-Policy/data/${dataset_name}"
 
 seed=0
 exp_name=${task_name}-${alg_name}-${addition_info}
@@ -38,6 +34,9 @@ fi
 
 
 cd Improved-3D-Diffusion-Policy
+
+dataset_path="$(pwd)/data/${dataset_name}"
+# echo $dataset_path
 
 export HYDRA_FULL_ERROR=1 
 export CUDA_VISIBLE_DEVICES=${gpu_id}
