@@ -25,16 +25,19 @@ class TiangongDexEnvInference:
     The deployment is running on the local computer of the robot.
     """
     def __init__(self, obs_horizon=2, action_horizon=8, device="gpu",
-                use_point_cloud=True, use_image=True, img_size=224,
-                 num_points=4096):
-        
-        # obs/action
-        self.use_point_cloud = use_point_cloud
-        self.use_image = use_image
-
-        # horizon
+                use_point_cloud=True, use_image=True, img_size=84,
+                 num_points=1024):
         self.obs_horizon = obs_horizon
         self.action_horizon = action_horizon
+        self.use_point_cloud = use_point_cloud
+        self.use_image = use_image
+        self.img_size=img_size
+        self.num_points=num_points
+        
+        if device == "gpu":
+            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        else:
+            self.device = torch.device("cpu")
         
         # init robot env
         from inrocs.robot_env.tianyi_env import tianyi_env as robot_env
@@ -99,11 +102,12 @@ class TiangongDexEnvInference:
         return action
     
     def process_cloud(self, obs):
+        # TODO: mathod in data converter
         return None
     
     def process_color(self, obs, show_img=True):
         # (w, h) for cv2.resize
-        img_new_size = (84, 84) #(480, 640)
+        img_new_size = (self.img_size, self.img_size) #(480, 640)
         all_cam_images = []
         for cam_name in self.args['camera_names']:
             curr_image = obs['images'][cam_name]
