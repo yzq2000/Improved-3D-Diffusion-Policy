@@ -1,7 +1,7 @@
 from typing import Optional
 import numpy as np
 import numba
-from diffusion_policy_3d.common.replay_buffer import ReplayBuffer
+from diffusion_policy_3d.common.zarr_replay_buffer import ZarrReplayBuffer
 
 
 @numba.jit(nopython=True)
@@ -76,7 +76,7 @@ def downsample_mask(mask, max_n, seed=0):
 
 class SequenceSampler:
     def __init__(self, 
-        replay_buffer: ReplayBuffer, 
+        replay_buffer: ZarrReplayBuffer, 
         sequence_length:int,
         pad_before:int=0,
         pad_after:int=0,

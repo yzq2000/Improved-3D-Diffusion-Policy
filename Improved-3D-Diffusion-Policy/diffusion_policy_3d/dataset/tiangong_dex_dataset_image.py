@@ -3,7 +3,7 @@ import torch
 import numpy as np
 import copy
 from diffusion_policy_3d.common.pytorch_util import dict_apply
-from diffusion_policy_3d.common.replay_buffer import ReplayBuffer
+from diffusion_policy_3d.common.zarr_replay_buffer import ZarrReplayBuffer
 from diffusion_policy_3d.common.sampler import (SequenceSampler, get_val_mask, downsample_mask)
 from diffusion_policy_3d.model.common.normalizer import LinearNormalizer, SingleFieldLinearNormalizer, StringNormalizer
 from diffusion_policy_3d.dataset.base_dataset import BaseDataset
@@ -40,7 +40,7 @@ class TiangongDexDatasetImage(BaseDataset):
         if self.use_depth:
             buffer_keys.append('depth')
 
-        self.replay_buffer = ReplayBuffer.copy_from_path(
+        self.replay_buffer = ZarrReplayBuffer.copy_from_path(
             zarr_path, keys=buffer_keys)
         
         val_mask = get_val_mask(
