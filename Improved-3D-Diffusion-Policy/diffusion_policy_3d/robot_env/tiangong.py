@@ -3,9 +3,6 @@ import sys
 sys.stdout = open(sys.stdout.fileno(), mode='w', buffering=1)
 sys.stderr = open(sys.stderr.fileno(), mode='w', buffering=1)
 
-# Add the project directory to the Python path
-project_path = str(pathlib.Path(__file__).parent.parent)
-sys.path.append(project_path)
 
 import hydra
 import time
@@ -18,7 +15,17 @@ import tqdm
 import torch
 import os 
 import cv2
+import numpy as np
+import sys
 
+
+# Add the project directory to the Python path
+project_path = str(pathlib.Path(__file__).parent.parent)
+sys.path.append(project_path)
+
+
+sys.path.append('/home/ps/Dev/vibrant/inrocs_1129_pi0/inrocs')
+from robot_env.tianyi_env import tianyi_env as robot_env
 
 class TiangongDexEnvInference:
     """
@@ -26,13 +33,14 @@ class TiangongDexEnvInference:
     """
     def __init__(self, obs_horizon=2, action_horizon=8, device="gpu",
                 use_point_cloud=True, use_image=True, img_size=84,
-                 num_points=1024):
+                 num_points=1024,camera_names=['top']):
         self.obs_horizon = obs_horizon
         self.action_horizon = action_horizon
         self.use_point_cloud = use_point_cloud
         self.use_image = use_image
         self.img_size=img_size
         self.num_points=num_points
+        self.camera_names=camera_names
         
         if device == "gpu":
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -40,8 +48,7 @@ class TiangongDexEnvInference:
             self.device = torch.device("cpu")
         
         # init robot env
-        from inrocs.robot_env.tianyi_env import tianyi_env as robot_env
-        robot_env.reset_to_parepre()
+        robot_env.reset_to_prepare_left()
     
     def step(self, action_list):
         
@@ -52,7 +59,8 @@ class TiangongDexEnvInference:
             # de normalize action
             action_pred = self.process_action(act)
             
-            robot_env.stepfull(action_pred)
+            # debug
+            # robot_env.stepfull(action_pred)
 
             obs = robot_env.get_obs_full()
             
@@ -78,11 +86,11 @@ class TiangongDexEnvInference:
         return obs_dict
     
     def reset(self, first_init=True):
-        robot_env.reset_to_parepre()
+        robot_env.reset_to_prepare_left()
         # warm up
         import time
         time.sleep(2)
-        obs = robot_env.get_obs_full()
+        obs = robot_env.get_obs()
         agent_pos = self.process_qpos(obs)
         obs_cloud = self.process_cloud(obs)
         obs_img = self.process_color(obs)
@@ -113,10 +121,12 @@ class TiangongDexEnvInference:
     
     def process_color(self, obs, show_img=True):
         # (w, h) for cv2.resize
+        # print("debug", obs.keys(), obs['images'].keys(), obs['images'])
         img_new_size = (self.img_size, self.img_size) #(480, 640)
         all_cam_images = []
-        for cam_name in self.args['camera_names']:
+        for cam_name in self.camera_names:
             curr_image = obs['images'][cam_name]
+            # print("debug", curr_image)
             curr_image = cv2.imdecode(curr_image, cv2.IMREAD_COLOR)
             curr_image = cv2.resize(curr_image, dsize=img_new_size)
             if show_img:

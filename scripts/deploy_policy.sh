@@ -28,7 +28,7 @@ export HYDRA_FULL_ERROR=1
 export CUDA_VISIBLE_DEVICES=${gpu_id}
 
 
-python deloy_tiangong_dexhand.py --config-name=${config_name}.yaml \
+python deploy_tiangong_dexhand.py --config-name=${config_name}.yaml \
                                 task=${task_name} \
                                 hydra.run.dir=${run_dir} \
                                 training.debug=$DEBUG \
@@ -38,16 +38,3 @@ python deloy_tiangong_dexhand.py --config-name=${config_name}.yaml \
                                 logging.mode=${wandb_mode} \
                                 checkpoint.save_ckpt=${save_ckpt} \
                                 task.dataset.zarr_path=$dataset_path
-
-
-
-# python deploy.py --config-name=${config_name}.yaml \
-#                             task=${task_name} \
-#                             hydra.run.dir=${run_dir} \
-#                             training.debug=$DEBUG \
-#                             training.seed=${seed} \
-#                             training.device="cuda:0" \
-#                             exp_name=${exp_name} \
-#                             logging.mode=${wandb_mode} \
-#                             checkpoint.save_ckpt=${save_ckpt} \
-#                             task.dataset.zarr_path=$dataset_path 

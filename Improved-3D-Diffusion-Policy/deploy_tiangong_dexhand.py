@@ -4,9 +4,6 @@ import os
 sys.stdout = open(sys.stdout.fileno(), mode='w', buffering=1)
 sys.stderr = open(sys.stderr.fileno(), mode='w', buffering=1)
 
-# Add the project directory to the Python path
-project_path = str(pathlib.Path(__file__).parent.parent)
-sys.path.append(project_path)
 
 import hydra
 import time
@@ -24,12 +21,13 @@ os.environ['WANDB_SILENT'] = "True"
 OmegaConf.register_new_resolver("eval", eval, replace=True)
 
 
-from diffusion_policy_3d.common.multi_realsense import MultiRealSense
-
-
 import numpy as np
 import torch
 from termcolor import cprint
+
+# Add the project directory to the Python path
+project_path = str(pathlib.Path(__file__).parent.parent)
+sys.path.append(project_path)
 
 @hydra.main(
     config_path=str(pathlib.Path(__file__).parent.joinpath(
@@ -75,7 +73,8 @@ def main(cfg: OmegaConf):
                                 use_point_cloud=use_point_cloud,
                                 use_image=use_image,
                                 img_size=img_size,
-                                num_points=num_points)
+                                num_points=num_points,
+                                camera_names=['top'])
 
     
     obs_dict = env.reset(first_init=first_init)
@@ -93,7 +92,7 @@ def main(cfg: OmegaConf):
 
     if record_data:
         import h5py
-        root_dir = "/home/gr1p24ap0049/projects/gr1-learning-real/"
+        root_dir = "/home/ps/saved_record_data/"
         save_dir = root_dir + "deploy_dir"
         os.makedirs(save_dir, exist_ok=True)
         
