@@ -25,7 +25,6 @@ sys.path.append(project_path)
 
 
 sys.path.append('/home/ps/Dev/vibrant/inrocs_1129_pi0/inrocs')
-# from robot_env.tianyi_env import tianyi_env as robot_env
 
 class TiangongDexEnvInference:
     """
@@ -33,7 +32,7 @@ class TiangongDexEnvInference:
     """
     def __init__(self, obs_horizon=2, action_horizon=8, device="gpu",
                 use_point_cloud=True, use_image=True, img_size=84,
-                 num_points=1024,camera_names=['left']):
+                num_points=1024,camera_names=['left'],debug_mode=True):
         self.obs_horizon = obs_horizon
         self.action_horizon = action_horizon
         self.use_point_cloud = use_point_cloud
@@ -41,6 +40,7 @@ class TiangongDexEnvInference:
         self.img_size=img_size
         self.num_points=num_points
         self.camera_names=camera_names
+        self.debug_mode=debug_mode
         
         self.action_array = []
         self.cloud_array = []
@@ -53,8 +53,10 @@ class TiangongDexEnvInference:
         else:
             self.device = torch.device("cpu")
         
-        # init robot env
-        # robot_env.reset_to_prepare_left()
+        if not self.debug_mode:
+            # init robot env
+            from robot_env.tianyi_env import tianyi_env as robot_env
+            robot_env.reset_to_prepare_left()
         
     
     def step(self, action_list):
@@ -66,15 +68,16 @@ class TiangongDexEnvInference:
             # de normalize action
             action_pred = self.process_action(act)
             
-            # debug
-            # robot_env.stepfull(action_pred)
+            if self.debug_mode:
+                obs={"qpos": np.zeros(26), "images": {"left": np.zeros((480, 640, 3))}}
+            else:
+                from robot_env.tianyi_env import tianyi_env as robot_env
+                robot_env.stepfull(action_pred)
+                obs = robot_env.get_obs_full()
 
-            # obs = robot_env.get_obs_full()
-            obs={"qpos": [0.0] * 26, "images": {"left": np.zeros((480, 640, 3))}}
-            
             self.cloud_array.append(self.process_cloud(obs))
             self.color_array.append(self.process_color(obs))
-            self.depth_array.append(self.process_depth(obs))
+            # self.depth_array.append(self.process_depth(obs))
             self.env_qpos_array.append(self.process_qpos(obs))
             time.sleep(0.2)
         
@@ -92,17 +95,21 @@ class TiangongDexEnvInference:
             obs_dict['image'] = torch.from_numpy(obs_img).permute(0, 3, 1, 2).unsqueeze(0)
         return obs_dict
     
-    def reset(self, first_init=True):
-        # robot_env.reset_to_prepare_left()
-        # warm up
-        import time
-        time.sleep(2)
-        # obs = robot_env.get_obs()
-        obs={"qpos": np.zeros(26), "images": {"left": np.zeros((480, 640, 3))}}
-        agent_pos = self.process_qpos(obs)
-        obs_cloud = self.process_cloud(obs)
-        obs_img = self.process_color(obs)
-        obs_depth = self.process_depth(obs)
+    def reset(self):
+        if self.debug_mode:
+            obs={"qpos": np.zeros(26), "images": {"left": np.zeros((480, 640, 3))}}
+        else:
+            from robot_env.tianyi_env import tianyi_env as robot_env
+            robot_env.reset_to_prepare_left()
+            # warm up
+            time.sleep(2)
+            obs = robot_env.get_obs()
+
+        agent_pos = np.stack([self.process_qpos(obs)] * self.obs_horizon, axis=0)
+        obs_cloud = np.stack([self.process_cloud(obs)] * self.obs_horizon, axis=0)
+        obs_img = np.stack([self.process_color(obs)] * self.obs_horizon, axis=0)
+        # obs_depth = np.stack([self.process_depth(obs)] * self.obs_horizon, axis=0)
+
         obs_dict = {
             'agent_pos': torch.from_numpy(agent_pos).unsqueeze(0).to(self.device),
         }
@@ -125,7 +132,7 @@ class TiangongDexEnvInference:
     
     def process_cloud(self, obs):
         # TODO: mathod in data converter
-        return None
+        return np.zeros((1024, 3))
     
     def process_color(self, obs):
         if len(self.camera_names) != 1:
