@@ -74,10 +74,18 @@ def main(cfg: OmegaConf):
                                 use_image=use_image,
                                 img_size=img_size,
                                 num_points=num_points,
-                                camera_names=['top'])
+                                camera_names=['left'])
 
     
-    obs_dict = env.reset(first_init=first_init)
+    # obs_dict = env.reset(first_init=first_init)
+    obs_img = np.stack([np.zeros((480, 640, 3))] * 2, axis=0)
+    init_pos = np.zeros(26)
+    agent_pos = np.stack([init_pos]*2, axis=0)
+    obs_dict = {
+            'agent_pos': torch.from_numpy(agent_pos).unsqueeze(0).to("cpu"),
+            'image': torch.from_numpy(obs_img).permute(0, 3, 1, 2).unsqueeze(0) * 2
+        }
+
 
     step_count = 0
     
