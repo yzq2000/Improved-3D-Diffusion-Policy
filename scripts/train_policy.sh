@@ -1,10 +1,12 @@
 # Examples:
 
-#   bash scripts/train_policy.sh dp_224x224_r3m  tiangong_dexhand-image 0107-image tiangong_dexhand_grasp_82.zarr
-#   bash scripts/train_policy.sh idp3  tiangong_dexhand-3d 0107-3d tiangong_dexhand_grasp_82.zarr
+# bash scripts/train_policy.sh dp_224x224_r3m  tiangong_dexhand-image 0113-image-skin-100 tiangong_dexhand_skin_100.zarr
+# bash scripts/train_policy.sh idp3  tiangong_dexhand-3d 0113-3d-skin-100 tiangong_dexhand_skin_100.zarr
+# bash scripts/train_policy.sh dp_224x224_r3m  tiangong_dexhand-image 0113-image-grasp-82 tiangong_dexhand_grasp_82.zarr
+# bash scripts/train_policy.sh idp3  tiangong_dexhand-3d 0113-3d-grasp-82 tiangong_dexhand_grasp_82.zarr
 
 DEBUG=False
-wandb_mode=offline
+wandb_mode=online
 
 
 alg_name=${1}
