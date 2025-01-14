@@ -1,7 +1,9 @@
 # Examples:
 
-#   bash scripts/deploy_policy.sh dp_224x224_r3m  tiangong_dexhand-image 0106-image tiangong_dexhand_grasp_82.zarr
-#   bash scripts/deploy_policy.sh idp3  tiangong_dexhand-3d 0106-3d tiangong_dexhand_grasp_82.zarr
+#   bash scripts/deploy_policy.sh idp3  tiangong_dexhand-3d 0113-3d-grasp-82 tiangong_dexhand_grasp_82.zarr
+#   bash scripts/deploy_policy.sh idp3  tiangong_dexhand-3d 0113-3d-skin-100 tiangong_dexhand_skin_100.zarr
+#   bash scripts/deploy_policy.sh dp_224x224_r3m  tiangong_dexhand-image 0113-image-skin-100 tiangong_dexhand_grasp_82.zarr
+#   bash scripts/deploy_policy.sh dp_224x224_r3m  tiangong_dexhand-image 0110-image-grasp-82 tiangong_dexhand_skin_100.zarr
 
 dataset_name=${4}
 
