@@ -23,8 +23,8 @@ import torchvision
 project_path = str(pathlib.Path(__file__).parent.parent)
 sys.path.append(project_path)
 
-
-sys.path.append('/home/ps/Dev/vibrant/inrocs_1129_pi0/inrocs')
+# pro 4
+sys.path.append('/home/ps/Devs/vibrant/inrocs/inrocs')
 
 class TiangongDexEnvInference:
     """
@@ -53,11 +53,6 @@ class TiangongDexEnvInference:
         else:
             self.device = torch.device("cpu")
         
-        if not self.debug_mode:
-            # init robot env
-            from robot_env.tianyi_env import tianyi_env as robot_env
-            robot_env.reset_to_prepare_left()
-        
     
     def step(self, action_list):
         
@@ -72,14 +67,14 @@ class TiangongDexEnvInference:
                 obs={"qpos": np.zeros(26), "images": {"left": np.zeros((480, 640, 3))}}
             else:
                 from robot_env.tianyi_env import tianyi_env as robot_env
-                robot_env.stepfull(action_pred)
+                robot_env.step_full(action_pred)
                 obs = robot_env.get_obs_full()
 
             self.cloud_array.append(self.process_cloud(obs))
             self.color_array.append(self.process_color(obs))
             # self.depth_array.append(self.process_depth(obs))
             self.env_qpos_array.append(self.process_qpos(obs))
-            time.sleep(0.2)
+            time.sleep(0.5)
         
         agent_pos = np.stack(self.env_qpos_array[-self.obs_horizon:], axis=0)
     
@@ -100,10 +95,10 @@ class TiangongDexEnvInference:
             obs={"qpos": np.zeros(26), "images": {"left": np.zeros((480, 640, 3))}}
         else:
             from robot_env.tianyi_env import tianyi_env as robot_env
-            robot_env.reset_to_prepare_left()
+            robot_env.reset_to_prepare_right()
             # warm up
             time.sleep(2)
-            obs = robot_env.get_obs()
+            obs = robot_env.get_obs_full()
 
         agent_pos = np.stack([self.process_qpos(obs)] * self.obs_horizon, axis=0)
         obs_cloud = np.stack([self.process_cloud(obs)] * self.obs_horizon, axis=0)
@@ -124,10 +119,11 @@ class TiangongDexEnvInference:
         # TODO: de normalize action
         # left arm position(7), right arm position(7), left hand position(6), right hand position(6)
         left_arm_jpos = action[0:7]
-        right_arm_jpos = action[ 7:14]
+        right_arm_jpos = action[7:14]
         left_hand_jpos = action[14:20]
         right_hand_jpos = action[20:26]
-        all_actions = np.concatenate((left_arm_jpos, left_hand_jpos, right_arm_jpos, right_hand_jpos), axis=-1)
+        # Accoroding to inrocs/robot/tianyi_pro4.py, the action is left hand, right hand, left arm, right arm.
+        all_actions = np.concatenate((left_hand_jpos, right_hand_jpos, left_arm_jpos, right_arm_jpos), axis=-1)
         return all_actions
     
     def process_cloud(self, obs):
@@ -139,7 +135,8 @@ class TiangongDexEnvInference:
             raise ValueError("only support one camera")
         cam_name = self.camera_names[0]
         image = obs['images'][cam_name]
-        image = cv2.resize(image, (self.img_size, self.img_size), interpolation=cv2.INTER_LINEAR)
+        image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+        image = cv2.resize(image, (self.img_size, self.img_size))
         image = (image / 255.0).astype(np.float32)
         return image
     

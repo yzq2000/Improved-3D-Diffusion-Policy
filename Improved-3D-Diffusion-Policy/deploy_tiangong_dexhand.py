@@ -83,7 +83,46 @@ def main(cfg: OmegaConf):
     while step_count < roll_out_length:
         with torch.no_grad():
             action = policy(obs_dict)[0]
-            action_list = [act.numpy() for act in action]
+            cur_obs = obs_dict['agent_pos'].numpy()
+            cur_obs = cur_obs.reshape(2, 26)
+            cur_obs = cur_obs[-1]
+            last_state = cur_obs
+            action_list = []
+            for act in action:
+                action_list.append(last_state + act.numpy())
+                last_state = last_state + act.numpy()
+            # Since action is the delta joint pos, we use last obs as the base state
+            # action_list = [act.numpy() + cur_obs for act in action]
+
+            # print("debug cur_obs = ", cur_obs)
+            # left_arm_str = ""
+            # right_arm_str = ""
+            # for i in range(7):
+            #     left_arm_str = left_arm_str + format(cur_obs[i], '.3f') + " "
+            #     right_arm_str = right_arm_str + format(cur_obs[i + 7], '.3f') + " "
+            
+            # left_hand_str = ""
+            # right_hand_str = ""
+            # for i in range(6):
+            #     left_hand_str = left_hand_str + format(cur_obs[i + 13], '.3f') + " "
+            #     right_hand_str = right_hand_str + format(cur_obs[i + 19], '.3f') + " "
+            
+            # print("debug   obs = ", left_arm_str, " | ", right_arm_str, " | ", left_hand_str, " | ", right_hand_str)
+
+            # for act in action_list:
+            #     act_left_arm_str = ""
+            #     act_right_arm_str = ""
+            #     for i in range(7):
+            #         act_left_arm_str = act_left_arm_str + format(act[i], '.3f') + " "
+            #         act_right_arm_str = act_right_arm_str + format(act[i + 7], '.3f') + " "
+                
+            #     act_left_hand_str = ""
+            #     act_right_hand_str = ""
+            #     for i in range(6):
+            #         act_left_hand_str = act_left_hand_str + format(act[i + 13], '.3f') + " "
+            #         act_right_hand_str = act_right_hand_str + format(act[i + 19], '.3f') + " "
+                
+            #     print("debug   act = ", act_left_arm_str, " | ", act_right_arm_str, " | ", act_left_hand_str, " | ", act_right_hand_str)
         
         obs_dict = env.step(action_list)
         step_count += action_horizon

@@ -37,7 +37,7 @@ Install conda env and packages for both learning and deployment machines:
     conda activate idp3
     
     # for cuda >= 12.1
-    pip3 install torch==2.1.0 torchvision --index-url https://download.pytorch.org/whl/cu121
+    pip3 install torch==2.1.0 torchvision --index-url https://download.pytorch.org/whl/cu121 -i https://pypi.tuna.tsinghua.edu.cn/simple
     # else, 
     # just install the torch version that matches your cuda version
     
@@ -51,19 +51,22 @@ Install conda env and packages for both learning and deployment machines:
 
 
     # install 3d diffusion policy
-    pip install --no-cache-dir wandb ipdb gpustat visdom notebook mediapy torch_geometric natsort scikit-video easydict pandas moviepy imageio imageio-ffmpeg termcolor av open3d dm_control dill==0.3.5.1 hydra-core==1.2.0 einops==0.4.1 diffusers==0.11.1 zarr==2.12.0 numba==0.56.4 pygame==2.1.2 shapely==1.8.4 tensorboard==2.10.1 tensorboardx==2.5.1 absl-py==0.13.0 pyparsing==2.4.7 jupyterlab==3.0.14 scikit-image yapf==0.31.0 opencv-python==4.5.3.56 psutil av matplotlib setuptools==59.5.0
+    pip install --no-cache-dir wandb ipdb gpustat visdom notebook mediapy torch_geometric natsort scikit-video easydict pandas moviepy imageio imageio-ffmpeg termcolor av open3d dm_control dill==0.3.5.1 hydra-core==1.2.0 einops==0.4.1 diffusers==0.11.1 zarr==2.12.0 numba==0.56.4 pygame==2.1.2 shapely==1.8.4 tensorboard==2.10.1 tensorboardx==2.5.1 absl-py==0.13.0 pyparsing==2.4.7 jupyterlab==3.0.14 scikit-image yapf==0.31.0 opencv-python==4.5.3.56 psutil av matplotlib setuptools==59.5.0 -i https://pypi.tuna.tsinghua.edu.cn/simple
 
     cd Improved-3D-Diffusion-Policy
     pip install -e .
     cd ..
 
     # install for diffusion policy if you want to use image-based policy
-    pip install timm==0.9.7
+    pip install timm==0.9.7 -i https://pypi.tuna.tsinghua.edu.cn/simple
 
     # install for r3m if you want to use image-based policy
     cd third_party/r3m
     pip install -e .
     cd ../..
+
+    # ImportError: cannot import name 'cached_download' from 'huggingface_hub' (~/mambaforge/envs/dp3/lib/python3.8/site-packages/huggingface_hub/__init__.py)
+    pip install huggingface_hub==0.25.2 
 
 
 [Install on Deployment Machine] Install realsense package for deploy:
