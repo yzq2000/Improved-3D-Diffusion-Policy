@@ -28,6 +28,8 @@ sys.path.append(project_path)
 # pro 4
 sys.path.append('/home/ps/Devs/vibrant/inrocs/inrocs')
 
+initial_state = [-0.14561805, 0.06069489, -0.51761932, -0.18, 0.28581739, -0.10982346, -0.13352916, 0.26115257, -0.10885823, 1.35870292, 1.07909285, -0.98161446, -0.14459579, 0.24475515, 0.82264018, 0.79090095, 0.78081647, 0.65218203, 0.47389977, 0.77681202, 0.92088979, 0.83451309, 0.8894613, 0.88955654, 0.588442, 0.90074142]
+
 class TiangongDexEnvInference:
     """
     The deployment is running on the local computer of the robot.
@@ -97,7 +99,9 @@ class TiangongDexEnvInference:
             obs={"qpos": np.zeros(26), "images": {"left": np.zeros((480, 640, 3))}}
         else:
             from robot_env.tianyi_env import tianyi_env as robot_env
-            robot_env.reset_to_prepare_right()
+            # robot_env.reset_to_prepare_right()
+            initial_action = self.process_action(initial_state)
+            robot_env.step_full(initial_action)
             # warm up
             time.sleep(2)
             obs = robot_env.get_obs_full()
@@ -118,7 +122,6 @@ class TiangongDexEnvInference:
             obs_dict['image'] = torch.from_numpy(obs_img).permute(0, 3, 1, 2).unsqueeze(0)
         return obs_dict
 
-    # de normalize action
     def process_action(self, action):
         # TODO: de normalize action
         # left arm position(7), right arm position(7), left hand position(6), right hand position(6)
