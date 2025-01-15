@@ -4,7 +4,7 @@ import numpy as np
 import copy
 from diffusion_policy_3d.common.pytorch_util import dict_apply
 from diffusion_policy_3d.common.zarr_replay_buffer import ZarrReplayBuffer
-from diffusion_policy_3d.common.sampler import (ZarrSequenceSampler, get_val_mask, downsample_mask)
+from diffusion_policy_3d.common.zarr_sampler import (ZarrSequenceSampler, get_val_mask, downsample_mask)
 from diffusion_policy_3d.model.common.normalizer import LinearNormalizer, SingleFieldLinearNormalizer, StringNormalizer
 from diffusion_policy_3d.dataset.base_dataset import BaseDataset
 import diffusion_policy_3d.model.vision_3d.point_process as point_process
