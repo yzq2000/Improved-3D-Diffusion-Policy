@@ -11,6 +11,8 @@ import pathlib
 from diffusion_policy_3d.workspace.base_workspace import BaseWorkspace
 import diffusion_policy_3d.common.gr1_action_util as action_util
 import diffusion_policy_3d.common.rotation_util as rotation_util
+import diffusion_policy_3d.common.point_cloud_util as point_cloud_util
+
 import tqdm
 import torch
 import os 
@@ -99,6 +101,8 @@ class TiangongDexEnvInference:
             # warm up
             time.sleep(2)
             obs = robot_env.get_obs_full()
+            # print(obs)
+            time.sleep(2)
 
         agent_pos = np.stack([self.process_qpos(obs)] * self.obs_horizon, axis=0)
         obs_cloud = np.stack([self.process_cloud(obs)] * self.obs_horizon, axis=0)
@@ -127,8 +131,17 @@ class TiangongDexEnvInference:
         return all_actions
     
     def process_cloud(self, obs):
-        # TODO: mathod in data converter
-        return np.zeros((1024, 3))
+        cam_name = self.camera_names[0]
+        rgb_img = obs['images'][cam_name]
+        rgb_img = cv2.imdecode(rgb_img, cv2.IMREAD_COLOR)
+        depth_img = obs['depths'][cam_name]
+        depth_img = cv2.imdecode(depth_img, cv2.IMREAD_COLOR)
+        camera_info = obs['color_info']
+        camera_intrinsics = np.array(camera_info.K).reshape(3, 3)
+        point_cloud = point_cloud_util.create_point_cloud(rgb_img, depth_img, camera_intrinsics)
+        obs_extrinsics_matrix = point_cloud_util.get_extrinsics_matrix(camera_info)
+        obs_pointcloud = point_cloud_util.preprocess_point_cloud(point_cloud, obs_extrinsics_matrix, use_cuda=True)
+        return obs_pointcloud
     
     def process_color(self, obs):
         if len(self.camera_names) != 1:

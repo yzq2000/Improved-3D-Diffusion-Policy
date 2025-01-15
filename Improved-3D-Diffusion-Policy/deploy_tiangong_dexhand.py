@@ -91,39 +91,7 @@ def main(cfg: OmegaConf):
             for act in action:
                 action_list.append(last_state + act.numpy())
                 last_state = last_state + act.numpy()
-            # Since action is the delta joint pos, we use last obs as the base state
-            # action_list = [act.numpy() + cur_obs for act in action]
 
-            # print("debug cur_obs = ", cur_obs)
-            # left_arm_str = ""
-            # right_arm_str = ""
-            # for i in range(7):
-            #     left_arm_str = left_arm_str + format(cur_obs[i], '.3f') + " "
-            #     right_arm_str = right_arm_str + format(cur_obs[i + 7], '.3f') + " "
-            
-            # left_hand_str = ""
-            # right_hand_str = ""
-            # for i in range(6):
-            #     left_hand_str = left_hand_str + format(cur_obs[i + 13], '.3f') + " "
-            #     right_hand_str = right_hand_str + format(cur_obs[i + 19], '.3f') + " "
-            
-            # print("debug   obs = ", left_arm_str, " | ", right_arm_str, " | ", left_hand_str, " | ", right_hand_str)
-
-            # for act in action_list:
-            #     act_left_arm_str = ""
-            #     act_right_arm_str = ""
-            #     for i in range(7):
-            #         act_left_arm_str = act_left_arm_str + format(act[i], '.3f') + " "
-            #         act_right_arm_str = act_right_arm_str + format(act[i + 7], '.3f') + " "
-                
-            #     act_left_hand_str = ""
-            #     act_right_hand_str = ""
-            #     for i in range(6):
-            #         act_left_hand_str = act_left_hand_str + format(act[i + 13], '.3f') + " "
-            #         act_right_hand_str = act_right_hand_str + format(act[i + 19], '.3f') + " "
-                
-            #     print("debug   act = ", act_left_arm_str, " | ", act_right_arm_str, " | ", act_left_hand_str, " | ", act_right_hand_str)
-        
         obs_dict = env.step(action_list)
         step_count += action_horizon
         print(f"step: {step_count}")
