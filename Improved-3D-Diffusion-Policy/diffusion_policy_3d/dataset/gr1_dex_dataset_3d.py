@@ -4,7 +4,7 @@ import numpy as np
 import copy
 from diffusion_policy_3d.common.pytorch_util import dict_apply
 from diffusion_policy_3d.common.zarr_replay_buffer import ZarrReplayBuffer
-from diffusion_policy_3d.common.sampler import (SequenceSampler, get_val_mask, downsample_mask)
+from diffusion_policy_3d.common.sampler import (ZarrSequenceSampler, get_val_mask, downsample_mask)
 from diffusion_policy_3d.model.common.normalizer import LinearNormalizer, SingleFieldLinearNormalizer, StringNormalizer
 from diffusion_policy_3d.dataset.base_dataset import BaseDataset
 import diffusion_policy_3d.model.vision_3d.point_process as point_process
@@ -49,7 +49,7 @@ class GR1DexDataset3D(BaseDataset):
             mask=train_mask, 
             max_n=max_train_episodes, 
             seed=seed)
-        self.sampler = SequenceSampler(
+        self.sampler = ZarrSequenceSampler(
             replay_buffer=self.replay_buffer, 
             sequence_length=horizon,
             pad_before=pad_before, 
@@ -62,7 +62,7 @@ class GR1DexDataset3D(BaseDataset):
 
     def get_validation_dataset(self):
         val_set = copy.copy(self)
-        val_set.sampler = SequenceSampler(
+        val_set.sampler = ZarrSequenceSampler(
             replay_buffer=self.replay_buffer, 
             sequence_length=self.horizon,
             pad_before=self.pad_before, 

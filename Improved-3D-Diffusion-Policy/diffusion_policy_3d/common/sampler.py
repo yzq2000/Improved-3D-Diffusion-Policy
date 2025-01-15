@@ -74,7 +74,7 @@ def downsample_mask(mask, max_n, seed=0):
         assert np.sum(train_mask) == n_train
     return train_mask
 
-class SequenceSampler:
+class ZarrSequenceSampler:
     def __init__(self, 
         replay_buffer: ZarrReplayBuffer, 
         sequence_length:int,
